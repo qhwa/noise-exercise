@@ -1,4 +1,5 @@
 import React, {useRef} from 'react';
+import generateNoise from './noise';
 import 'bulma/css/bulma.min.css';
 import './App.css';
 
@@ -40,16 +41,6 @@ function generateImage(w, h) {
   });
 
   return new ImageData(numbers, w, h);
-}
-
-function generateNoise(w, h) {
-  return generateWhiteNoise(w, h);
-}
-
-function generateWhiteNoise(w, h) {
-  return Uint8ClampedArray.from({length: w * h}, () => {
-    return Math.floor(Math.random() * 255);
-  });
 }
 
 export default App;
