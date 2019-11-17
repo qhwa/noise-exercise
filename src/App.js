@@ -1,26 +1,55 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, {useRef} from 'react';
+import 'bulma/css/bulma.min.css';
 import './App.css';
 
 function App() {
+  const canvasEl = useRef(null);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <canvas ref={canvasEl} />
+      <form onSubmit={e => handleSubmit(e, canvasEl)}>
+        <input type="submit" value="generate" className="button" />
+      </form>
     </div>
   );
+}
+
+function handleSubmit(evt, ref) {
+  evt.preventDefault();
+
+  const canvas = ref.current;
+  const {width, height} = canvas;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = 'green';
+  ctx.fillRect(0, 0, width, height);
+
+  const image = generateImage(width, height);
+  ctx.putImageData(image, 0, 0);
+}
+
+function generateImage(w, h) {
+  const data = generateNoise(w, h);
+  const numbers = Uint8ClampedArray.from({length: w * h * 4}, (_, k) => {
+    const idx = k >> 2;
+    const type = k % 4;
+    if (type < 3) {
+      return data[idx];
+    }
+    return 255;
+  });
+
+  return new ImageData(numbers, w, h);
+}
+
+function generateNoise(w, h) {
+  return generateWhiteNoise(w, h);
+}
+
+function generateWhiteNoise(w, h) {
+  return Uint8ClampedArray.from({length: w * h}, () => {
+    return Math.floor(Math.random() * 255);
+  });
 }
 
 export default App;
