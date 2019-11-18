@@ -1,5 +1,5 @@
 export default function generateNoise(w, h, t = 0) {
-  return valueNoise(w, h, t);
+  return valueNoise1D(w, h, t);
 }
 
 export function whiteNoise(w, h) {
@@ -8,28 +8,25 @@ export function whiteNoise(w, h) {
   });
 }
 
-const GRID = 10; // 纹理划分 10 个格子
+const GRID = 256; // 纹理划分 256 个格子
+const GRID_MASK = GRID - 1;
 const template = Array.from({length: GRID}, (_, k) => {
   return Math.floor(Math.random() * 255);
 });
 
-export function valueNoise(w, h, t) {
+export function valueNoise1D(w, h, t) {
   return Uint8ClampedArray.from({length: w * h}, (_, k) => {
     const SPEED = 2;
-    const x = normalize(k % w, Math.floor(t * SPEED), GRID);
-    const x0 = Math.floor(x);
-    const x1 = x0 === GRID - 1 ? 0 : x0 + 1;
+    const x = normalize(k % w, Math.floor(t * SPEED)) % GRID;
+    const x0 = x & GRID_MASK;
+    const x1 = x0 + 1;
 
     return cosineRemap(template[x0], template[x1], x - x0);
   });
 }
 
-function normalize(x, offset, grids) {
-  let n = ((x - offset) / 20 % grids);
-  if (n < 0) {
-    n += grids;
-  }
-  return n;
+function normalize(x, offset) {
+  return (x + offset) / 10;
 }
 
 function cosineRemap(min, max, t) {
