@@ -7,6 +7,7 @@ function App() {
   const canvasEl = useRef(null);
   const [throt, setThrot] = useState(false);
   const [t, setTime] = useState(0);
+  const [type] = useState('value_noise_1d');
 
   useEffect(() => {
     refresh();
@@ -52,18 +53,19 @@ function App() {
     refresh();
   }
 
-  function refresh() {
+  async function refresh() {
     const canvas = canvasEl.current;
     const {width, height} = canvas;
     const ctx = canvas.getContext('2d');
 
-    const image = generateImage(width, height, throt, t);
+    const image = await generateImage(type, width, height, throt, t);
     ctx.putImageData(image, 0, 0);
   }
 }
 
-function generateImage(w, h, throt, t) {
-  const grey = generateNoise(w, h, t);
+async function generateImage(type, w, h, throt, t) {
+  const grey = await generateNoise(type, w, h, t);
+
   const numbers = Uint8ClampedArray.from({length: w * h * 4}, (_, k) => {
     const idx = k >> 2;
     const type = k % 4;
