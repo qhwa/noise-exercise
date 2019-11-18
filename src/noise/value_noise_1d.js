@@ -11,7 +11,7 @@ export default function valueNoise1D(w, h, t) {
     const x0 = x & GRID_MASK;
     const x1 = x0 + 1;
 
-    return cosineRemap(template[x0], template[x1], x - x0);
+    return lerp(template[x0], template[x1], smoothRemap(x - x0));
   });
 }
 
@@ -19,8 +19,8 @@ function normalize(x, offset) {
   return (x + offset) / 10;
 }
 
-function cosineRemap(min, max, t) {
-  return lerp(min, max, (1 - Math.cos(t * Math.PI)) * 0.5);
+function smoothRemap(t) {
+  return (1 - Math.cos(t * Math.PI)) * 0.5;
 }
 
 function lerp(min, max, t) {
