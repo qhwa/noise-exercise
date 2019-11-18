@@ -6,8 +6,8 @@ import './App.css';
 function App() {
   const canvasEl = useRef(null);
   const [throt, setThrot] = useState(false);
-  const [t, setTime] = useState(0);
-  const [type] = useState('value_noise_1d');
+  const [t, setTime] = useState(50);
+  const [type] = useState('value_noise_2d');
 
   useEffect(() => {
     refresh();
