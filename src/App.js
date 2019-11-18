@@ -7,45 +7,57 @@ function App() {
   const canvasEl = useRef(null);
   const [throt, setThrot] = useState(false);
   const [t, setTime] = useState(50);
-  const [type] = useState('value_noise_2d');
+  const [type, setType] = useState('value_noise_2d');
 
   useEffect(() => {
     refresh();
   });
 
   return (
-    <div className="App">
+    <main>
       <canvas ref={canvasEl} />
       <form onSubmit={e => {
         handleSubmit(e)
       }}>
-        <div>
-          <label>
-            <input type="checkbox" value={throt} onChange={
-              e => setThrot(e.target.checked)
-            } />
-            throt
-          </label>
+        <div className="field">
+          <label className="label">noise type</label>
+          <div className="select">
+            <select onChange={e => setType(e.target.value)} value={type}>
+              <option value="white_noise">white noise</option>
+              <option value="value_noise_1d">value noise 1D</option>
+              <option value="value_noise_2d">value noise 2D</option>
+            </select>
+          </div>
+        </div>
+        
+        <div className="field">
+          <div className="control">
+            <label className="checkbox">
+              <input type="checkbox" value={throt} onChange={
+                e => setThrot(e.target.checked)
+              } />
+              throt
+            </label>
+          </div>
         </div>
       
-        <div>
-          <label>
-            <input
-              type="range"
-              max="100"
-              value={t}
-              onChange={e => {
-                setTime(e.target.value);
-              }}
-              style={{background: `linear-gradient(90deg, rgb(11, 30, 223) ${t}%, rgba(255, 255, 255, 0.216) ${t}%)`}}
-            />
-            {t}
-          </label>
+        <div className="field">
+          <label className="label">offset</label>
+          <input
+            type="range"
+            max="100"
+            value={t}
+            onChange={e => {
+              setTime(e.target.value);
+            }}
+            style={{background: `linear-gradient(90deg, rgb(11, 30, 223) ${t}%, rgba(255, 255, 255, 0.216) ${t}%)`}}
+          />
+          {t}
         </div>
 
         <input type="submit" value="generate" className="button" />
       </form>
-    </div>
+    </main>
   );
 
   function handleSubmit(evt) {
