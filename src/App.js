@@ -7,7 +7,7 @@ function App() {
   const canvasEl = useRef(null);
   const [throt, setThrot] = useState(false);
   const [t, setTime] = useState(50);
-  const [type, setType] = useState('value_noise_2d');
+  const [type, setType] = useState('perlin_noise_2d');
 
   useEffect(() => {
     refresh();
@@ -26,6 +26,7 @@ function App() {
               <option value="white_noise">white noise</option>
               <option value="value_noise_1d">value noise 1D</option>
               <option value="value_noise_2d">value noise 2D</option>
+              <option value="perlin_noise_2d">Perlin noise 2D</option>
             </select>
           </div>
         </div>
