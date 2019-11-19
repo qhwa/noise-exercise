@@ -9,20 +9,20 @@ const template = Array.from({length: GRID * GRID}, (_, k) => {
   ]
 });
 
-export default function valueNoise2D(w, h, t) {
+export default function valueNoise2D(w, h, t, l) {
   return Uint8ClampedArray.from({length: w * h}, (_, k) => {
     const x = k % w;
     const y = Math.floor(k / w);
-    const xNoise = normalize(x, t * SPEED[0]) % GRID;
-    const yNoise = normalize(y, t * SPEED[1]) % GRID;
+    const xNoise = ((x + t * SPEED[0]) / l) % GRID;
+    const yNoise = ((y + t * SPEED[1]) / l) % GRID;
     const x0 = xNoise & GRID_MASK;
     const y0 = yNoise & GRID_MASK;
     const c00 = template[x0 + y0 * GRID];
     const c01 = template[x0 + (y0 + 1) * GRID];
     const c10 = template[x0 + 1 + y0 * GRID];
     const c11 = template[x0 + 1 + (y0 + 1) * GRID];
-    const tx = smoothRemap(xNoise - x0);
-    const ty = smoothRemap(yNoise - y0);
+    const tx = smoothstep(xNoise - x0);
+    const ty = smoothstep(yNoise - y0);
 
     const nx0 = lerp(c00, c10, tx);
     const nx1 = lerp(c01, c11, tx);
@@ -32,11 +32,7 @@ export default function valueNoise2D(w, h, t) {
   });
 }
 
-function normalize(x, offset) {
-  return (x + offset) / 10;
-}
-
-function smoothRemap(t) {
+function smoothstep(t) {
   return (1 - Math.cos(t * Math.PI)) * 0.5;
 }
 

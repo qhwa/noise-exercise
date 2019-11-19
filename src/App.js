@@ -7,6 +7,7 @@ function App() {
   const canvasEl = useRef(null);
   const [throt, setThrot] = useState(false);
   const [t, setTime] = useState(50);
+  const [l, setLattice] = useState(50);
   const [type, setType] = useState('perlin_noise_2d');
 
   useEffect(() => {
@@ -43,7 +44,7 @@ function App() {
         </div>
       
         <div className="field">
-          <label className="label">offset</label>
+          <label className="label">offset: {t}</label>
           <input
             type="range"
             max="100"
@@ -51,9 +52,22 @@ function App() {
             onChange={e => {
               setTime(e.target.value);
             }}
-            style={{background: `linear-gradient(90deg, rgb(11, 30, 223) ${t}%, rgba(255, 255, 255, 0.216) ${t}%)`}}
+            style={sliderStyle(t)}
           />
-          {t}
+        </div>
+
+        <div className="field">
+          <label className="label">lattice: {l}</label>
+          <input
+            type="range"
+            min="1"
+            max="256"
+            value={l}
+            onChange={e => {
+              setLattice(e.target.value);
+            }}
+            style={sliderStyle((l - 1) / 255 * 100)}
+          />
         </div>
 
         <input type="submit" value="generate" className="button" />
@@ -71,13 +85,13 @@ function App() {
     const {width, height} = canvas;
     const ctx = canvas.getContext('2d');
 
-    const image = await generateImage(type, width, height, throt, t);
+    const image = await generateImage(type, width, height, throt, t, l);
     ctx.putImageData(image, 0, 0);
   }
 }
 
-async function generateImage(type, w, h, throt, t) {
-  const grey = await generateNoise(type, w, h, t);
+async function generateImage(type, w, h, throt, t, l) {
+  const grey = await generateNoise(type, w, h, t, l);
 
   const numbers = Uint8ClampedArray.from({length: w * h * 4}, (_, k) => {
     const idx = k >> 2;
@@ -103,6 +117,12 @@ function uvTransform(n, [min, max], [minV, maxV]) {
   }
 
   return 128;
+}
+
+function sliderStyle(t) {
+  return {
+    background: `linear-gradient(90deg,#3273dc ${t}%, rgba(0,0,0,0.216) 0)`
+  };
 }
 
 export default App;

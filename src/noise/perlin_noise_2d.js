@@ -16,40 +16,38 @@ function normalizedVector([x, y]) {
   ];
 }
 
-export default function valueNoise2D(w, h, t) {
+export default function perlinNoise2D(w, h, t, l) {
   return Uint8ClampedArray.from({length: w * h}, (_, k) => {
-    const x = k % w;
-    const y = Math.floor(k / w);
-    const xNoise = normalize(x, t * SPEED[0]) % GRID;
-    const yNoise = normalize(y, t * SPEED[1]) % GRID;
-    const x0 = xNoise & GRID_MASK;
-    const y0 = yNoise & GRID_MASK;
-
-    const c00 = template[x0 + y0 * GRID];
-    const c01 = template[x0 + (y0 + 1) * GRID];
-    const c10 = template[x0 + 1 + y0 * GRID];
-    const c11 = template[x0 + 1 + (y0 + 1) * GRID];
-
-    const tx = xNoise - x0;
-    const ty = yNoise - y0;
-    const u = smoothstep(tx);
-    const v = smoothstep(ty);
-
-    const p00 = [tx, ty];
-    const p01 = [tx, ty - 1];
-    const p10 = [tx - 1, ty];
-    const p11 = [tx - 1, ty - 1];
-
-    const nx0 = lerp(dot(c00, p00), dot(c10, p10), u);
-    const nx1 = lerp(dot(c01, p01), dot(c11, p11), u);
-
-    const value = lerp(nx0, nx1, v);
-    return (value + 0.5) * 256;
+    const x = ((k % w + t * SPEED[0]) / l) % GRID;
+    const y = ((Math.floor(k / w) + t * SPEED[1]) / l) % GRID;
+    return perlin(x, y);
   });
 }
 
-function normalize(x, offset) {
-  return (x + offset) / 10;
+function perlin(xNoise, yNoise, w, h) {
+  const x0 = xNoise & GRID_MASK;
+  const y0 = yNoise & GRID_MASK;
+
+  const c00 = template[x0 + y0 * GRID];
+  const c01 = template[x0 + (y0 + 1) * GRID];
+  const c10 = template[x0 + 1 + y0 * GRID];
+  const c11 = template[x0 + 1 + (y0 + 1) * GRID];
+
+  const tx = xNoise - x0;
+  const ty = yNoise - y0;
+  const u = smoothstep(tx);
+  const v = smoothstep(ty);
+
+  const p00 = [tx, ty];
+  const p01 = [tx, ty - 1];
+  const p10 = [tx - 1, ty];
+  const p11 = [tx - 1, ty - 1];
+
+  const nx0 = lerp(dot(c00, p00), dot(c10, p10), u);
+  const nx1 = lerp(dot(c01, p01), dot(c11, p11), u);
+
+  const value = lerp(nx0, nx1, v);
+  return (value + 0.5) * 256;
 }
 
 function dot([a, b], [c, d]) {

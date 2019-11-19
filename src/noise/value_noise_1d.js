@@ -4,22 +4,18 @@ const template = Array.from({length: GRID}, (_, k) => {
   return Math.floor(Math.random() * 255);
 });
 
-export default function valueNoise1D(w, h, t) {
+export default function valueNoise1D(w, h, t, l) {
   return Uint8ClampedArray.from({length: w * h}, (_, k) => {
     const SPEED = 2;
-    const x = normalize(k % w, Math.floor(t * SPEED)) % GRID;
+    const x = ((k % w + Math.floor(t * SPEED)) / l) % GRID;
     const x0 = x & GRID_MASK;
     const x1 = x0 + 1;
 
-    return lerp(template[x0], template[x1], smoothRemap(x - x0));
+    return lerp(template[x0], template[x1], smoothstep(x - x0));
   });
 }
 
-function normalize(x, offset) {
-  return (x + offset) / 10;
-}
-
-function smoothRemap(t) {
+function smoothstep(t) {
   return (1 - Math.cos(t * Math.PI)) * 0.5;
 }
 
