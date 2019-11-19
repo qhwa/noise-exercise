@@ -1,2 +1,0 @@
-(this.webpackJsonpnoise=this.webpackJsonpnoise||[]).push([[2],{8:function(n,t,r){"use strict";function o(n,t){return Uint8ClampedArray.from({length:n*t},(function(){return Math.floor(255*Math.random())}))}r.r(t),r.d(t,"default",(function(){return o}))}}]);
-//# sourceMappingURL=2.6fe24c58.chunk.js.map
