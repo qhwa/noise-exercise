@@ -17,10 +17,12 @@ export default function valueNoise2D(w, h, t, l) {
     const yNoise = ((y + t * SPEED[1]) / l) % GRID;
     const x0 = xNoise & GRID_MASK;
     const y0 = yNoise & GRID_MASK;
+    const x1 = (x0 + 1) & GRID_MASK;
+    const y1 = (y0 + 1) & GRID_MASK;
     const c00 = template[x0 + y0 * GRID];
-    const c01 = template[x0 + (y0 + 1) * GRID];
-    const c10 = template[x0 + 1 + y0 * GRID];
-    const c11 = template[x0 + 1 + (y0 + 1) * GRID];
+    const c01 = template[x0 + y1 * GRID];
+    const c10 = template[x1 + y0 * GRID];
+    const c11 = template[x1 + y1 * GRID];
     const tx = smoothstep(xNoise - x0);
     const ty = smoothstep(yNoise - y0);
 

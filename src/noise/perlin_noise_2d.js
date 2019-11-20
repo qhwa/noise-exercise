@@ -2,11 +2,14 @@ const GRID = 256; // 纹理划分 256 个格子
 const GRID_MASK = GRID - 1;
 const SPEED = [2, 2];
 
-const template = Array.from({length: GRID * GRID}, (_, k) => {
+const template = Array.from({length: GRID}, (_, k) => {
   const x = Math.random() * 2 - 1;
   const y = Math.random() * 2 - 1;
   return normalizedVector([x, y]);
 });
+
+const arr = Array.from({length: GRID}, (_, k) => k).sort(() => Math.random() - 0.5);
+const permutation = [...arr, ...arr];
 
 function normalizedVector([x, y]) {
   const l = Math.sqrt(x * x + y * y);
@@ -24,14 +27,16 @@ export default function perlinNoise2D(w, h, t, l) {
   });
 }
 
-function perlin(xNoise, yNoise, w, h) {
+function perlin(xNoise, yNoise) {
   const x0 = xNoise & GRID_MASK;
   const y0 = yNoise & GRID_MASK;
+  const x1 = (x0 + 1) & GRID_MASK;
+  const y1 = (y0 + 1) & GRID_MASK;
 
-  const c00 = template[x0 + y0 * GRID];
-  const c01 = template[x0 + (y0 + 1) * GRID];
-  const c10 = template[x0 + 1 + y0 * GRID];
-  const c11 = template[x0 + 1 + (y0 + 1) * GRID];
+  const c00 = template[(permutation[(permutation[x0] + y0) & GRID_MASK]) & GRID_MASK];
+  const c01 = template[(permutation[(permutation[x0] + y1) & GRID_MASK]) & GRID_MASK];
+  const c10 = template[(permutation[(permutation[x1] + y0) & GRID_MASK]) & GRID_MASK];
+  const c11 = template[(permutation[(permutation[x1] + y1) & GRID_MASK]) & GRID_MASK];
 
   const tx = xNoise - x0;
   const ty = yNoise - y0;
