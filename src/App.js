@@ -28,6 +28,7 @@ function App() {
               <option value="value_noise_1d">value noise 1D</option>
               <option value="value_noise_2d">value noise 2D</option>
               <option value="perlin_noise_2d">original Perlin noise 2D</option>
+              <option value="improved_perlin_noise_2d">improved Perlin noise 2D</option>
             </select>
           </div>
         </div>

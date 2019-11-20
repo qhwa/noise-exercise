@@ -33,10 +33,10 @@ function perlin(xNoise, yNoise) {
   const x1 = (x0 + 1) & GRID_MASK;
   const y1 = (y0 + 1) & GRID_MASK;
 
-  const c00 = template[(permutation[(permutation[x0] + y0) & GRID_MASK]) & GRID_MASK];
-  const c01 = template[(permutation[(permutation[x0] + y1) & GRID_MASK]) & GRID_MASK];
-  const c10 = template[(permutation[(permutation[x1] + y0) & GRID_MASK]) & GRID_MASK];
-  const c11 = template[(permutation[(permutation[x1] + y1) & GRID_MASK]) & GRID_MASK];
+  const c00 = getGradient(x0, y0);
+  const c01 = getGradient(x0, y1);
+  const c10 = getGradient(x1, y0);
+  const c11 = getGradient(x1, y1);
 
   const tx = xNoise - x0;
   const ty = yNoise - y0;
@@ -55,12 +55,16 @@ function perlin(xNoise, yNoise) {
   return (value + 0.5) * 256;
 }
 
+function getGradient(x, y) {
+  return template[(permutation[(permutation[x] + y) & GRID_MASK]) & GRID_MASK];
+}
+
 function dot([a, b], [c, d]) {
   return a * c + b * d;
 }
 
 function smoothstep(t) {
-  return 3 * t * t - 2 * t * t * t;
+  return t * t * t * (t * (t * 6 - 15) + 10);
 }
 
 function lerp(a0, a1, t) {
