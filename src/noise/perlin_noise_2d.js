@@ -60,7 +60,7 @@ function dot([a, b], [c, d]) {
 }
 
 function smoothstep(t) {
-  return (1 - Math.cos(t * Math.PI)) * 0.5;
+  return 3 * t * t - 2 * t * t * t;
 }
 
 function lerp(a0, a1, t) {
