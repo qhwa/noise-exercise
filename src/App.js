@@ -9,6 +9,7 @@ function App() {
   const [l, setLattice] = useState(50);
   const [type, setType] = useState('perlin_noise_2d');
   const [mask, setMask] = useState(false);
+  const [multiFreq, setMultiFreq] = useState(false);
 
   useEffect(() => {
     refresh();
@@ -38,6 +39,17 @@ function App() {
                 e => setMask(e.target.checked)
               } />
               apply mask
+            </label>
+          </div>
+        </div>
+      
+        <div className="field">
+          <div className="control">
+            <label className="checkbox">
+              <input type="checkbox" value={multiFreq} onChange={
+                e => setMultiFreq(e.target.checked)
+              } />
+              multiple frequencies
             </label>
           </div>
         </div>
@@ -77,13 +89,13 @@ function App() {
     const {width, height} = canvas;
     const ctx = canvas.getContext('2d');
 
-    const image = await generateImage(type, width, height, mask, t, l);
+    const image = await generateImage(type, {width, height, mask, t, l, multiFreq});
     ctx.putImageData(image, 0, 0);
   }
 }
 
-async function generateImage(type, w, h, mask, t, l) {
-  const grey = await generateNoise('grey', type, w, h, t, l);
+async function generateImage(type, {width: w, height: h, mask, t, l, multiFreq}) {
+  const grey = await generateNoise('grey', type, w, h, t, l, multiFreq);
 
   const numbers = Uint8ClampedArray.from({length: w * h * 4}, (_, k) => {
     const idx = k >> 2;
