@@ -4,3 +4,5 @@ export default function whiteNoise(w, h) {
   });
 }
 
+export function seed() {
+}

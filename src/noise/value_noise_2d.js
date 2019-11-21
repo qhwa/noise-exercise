@@ -2,14 +2,16 @@ const GRID = 256; // 纹理划分 256 个格子
 const GRID_MASK = GRID - 1;
 const SPEED = [2, 2];
 
-const template = Array.from({length: GRID * GRID}, (_, k) => {
-  return [
-    Math.floor(Math.random() * 255),
-    Math.floor(Math.random() * 255)
-  ]
-});
+export function seed() {
+  return Array.from({length: GRID * GRID}, (_, k) => {
+    return [
+      Math.floor(Math.random() * 255),
+      Math.floor(Math.random() * 255)
+    ]
+  });
+}
 
-export default function valueNoise2D(w, h, t, l) {
+export default function valueNoise2D(w, h, t, l, template) {
   return Uint8ClampedArray.from({length: w * h}, (_, k) => {
     const x = k % w;
     const y = Math.floor(k / w);

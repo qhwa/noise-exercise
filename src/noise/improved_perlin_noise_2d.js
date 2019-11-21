@@ -2,18 +2,15 @@ const GRID = 256; // 纹理划分 256 个格子
 const GRID_MASK = GRID - 1;
 const SPEED = [2, 2];
 
-const arr = Array.from({length: GRID}, (_, k) => k).sort(() => Math.random() - 0.5);
-const permutation = [...arr, ...arr];
-
-export default function perlinNoise2D(w, h, t, l) {
+export default function perlinNoise2D(w, h, t, l, permutation) {
   return Uint8ClampedArray.from({length: w * h}, (_, k) => {
     const x = ((k % w + t * SPEED[0]) / l) % GRID;
     const y = ((Math.floor(k / w) + t * SPEED[1]) / l) % GRID;
-    return perlin(x, y);
+    return perlin(x, y, permutation);
   });
 }
 
-function perlin(x, y) {
+function perlin(x, y, permutation) {
   const xi0 = x & GRID_MASK;
   const yi0 = y & GRID_MASK;
 
@@ -32,10 +29,10 @@ function perlin(x, y) {
   const y0 = ty;
   const y1 = ty - 1;
 
-  const a = gradientDotV(hash(xi0, yi0), x0, y0);
-  const b = gradientDotV(hash(xi1, yi0), x1, y0);
-  const c = gradientDotV(hash(xi0, yi1), x0, y1);
-  const d = gradientDotV(hash(xi1, yi1), x1, y1);
+  const a = gradientDotV(hash(xi0, yi0, permutation), x0, y0);
+  const b = gradientDotV(hash(xi1, yi0, permutation), x1, y0);
+  const c = gradientDotV(hash(xi0, yi1, permutation), x0, y1);
+  const d = gradientDotV(hash(xi1, yi1, permutation), x1, y1);
 
   const k0 = a;
   const k1 = (b - a);
@@ -67,10 +64,15 @@ function gradientDotV(perm, x, y, z = 0) {
   }
 }
 
-function hash(x, y) {
+function hash(x, y, permutation) {
   return (permutation[(permutation[x] + y) & GRID_MASK]) & GRID_MASK;
 }
 
 function quintic(t) {
   return t * t * t * (t * (t * 6 - 15) + 10);
+}
+
+export function seed() {
+  const arr = Array.from({length: GRID}, (_, k) => k).sort(() => Math.random() - 0.5);
+  return [...arr, ...arr];
 }

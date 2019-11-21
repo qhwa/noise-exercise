@@ -8,9 +8,6 @@ const template = Array.from({length: GRID}, (_, k) => {
   return normalizedVector([x, y]);
 });
 
-const arr = Array.from({length: GRID}, (_, k) => k).sort(() => Math.random() - 0.5);
-const permutation = [...arr, ...arr];
-
 function normalizedVector([x, y]) {
   const l = Math.sqrt(x * x + y * y);
   return [
@@ -19,24 +16,24 @@ function normalizedVector([x, y]) {
   ];
 }
 
-export default function perlinNoise2D(w, h, t, l) {
+export default function perlinNoise2D(w, h, t, l, permutation) {
   return Uint8ClampedArray.from({length: w * h}, (_, k) => {
     const x = ((k % w + t * SPEED[0]) / l) % GRID;
     const y = ((Math.floor(k / w) + t * SPEED[1]) / l) % GRID;
-    return perlin(x, y);
+    return perlin(x, y, permutation);
   });
 }
 
-function perlin(xNoise, yNoise) {
+function perlin(xNoise, yNoise, permutation) {
   const x0 = xNoise & GRID_MASK;
   const y0 = yNoise & GRID_MASK;
   const x1 = (x0 + 1) & GRID_MASK;
   const y1 = (y0 + 1) & GRID_MASK;
 
-  const c00 = getGradient(x0, y0);
-  const c01 = getGradient(x0, y1);
-  const c10 = getGradient(x1, y0);
-  const c11 = getGradient(x1, y1);
+  const c00 = getGradient(x0, y0, permutation);
+  const c01 = getGradient(x0, y1, permutation);
+  const c10 = getGradient(x1, y0, permutation);
+  const c11 = getGradient(x1, y1, permutation);
 
   const tx = xNoise - x0;
   const ty = yNoise - y0;
@@ -55,7 +52,7 @@ function perlin(xNoise, yNoise) {
   return (value + 0.5) * 256;
 }
 
-function getGradient(x, y) {
+function getGradient(x, y, permutation) {
   return template[(permutation[(permutation[x] + y) & GRID_MASK]) & GRID_MASK];
 }
 
@@ -69,4 +66,9 @@ function smoothstep(t) {
 
 function lerp(a0, a1, t) {
   return (1 - t) * a0 + t * a1;
+}
+
+export function seed() {
+  const arr = Array.from({length: GRID}, (_, k) => k).sort(() => Math.random() - 0.5);
+  return [...arr, ...arr];
 }

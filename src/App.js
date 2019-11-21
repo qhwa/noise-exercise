@@ -92,11 +92,12 @@ function App() {
 }
 
 async function generateImage(type, w, h, throt, t, l) {
-  const grey = await generateNoise(type, w, h, t, l);
+  const grey = await generateNoise('grey', type, w, h, t, l);
 
   const numbers = Uint8ClampedArray.from({length: w * h * 4}, (_, k) => {
     const idx = k >> 2;
     const type = k % 4;
+
     if (type < 3) {
       return throt ?
         uvTransform(grey[idx], [0, 158], [0, 255]) :
