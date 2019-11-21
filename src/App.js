@@ -5,10 +5,10 @@ import './App.css';
 
 function App() {
   const canvasEl = useRef(null);
-  const [throt, setThrot] = useState(false);
   const [t, setTime] = useState(50);
   const [l, setLattice] = useState(50);
   const [type, setType] = useState('perlin_noise_2d');
+  const [mask, setMask] = useState(false);
 
   useEffect(() => {
     refresh();
@@ -17,9 +17,7 @@ function App() {
   return (
     <main>
       <canvas ref={canvasEl} />
-      <form onSubmit={e => {
-        handleSubmit(e)
-      }}>
+      <form>
         <div className="field">
           <label className="label">noise type</label>
           <div className="select">
@@ -36,10 +34,10 @@ function App() {
         <div className="field">
           <div className="control">
             <label className="checkbox">
-              <input type="checkbox" value={throt} onChange={
-                e => setThrot(e.target.checked)
+              <input type="checkbox" value={mask} onChange={
+                e => setMask(e.target.checked)
               } />
-              throt
+              apply mask
             </label>
           </div>
         </div>
@@ -70,28 +68,21 @@ function App() {
             style={sliderStyle((l - 1) / 255 * 100)}
           />
         </div>
-
-        <input type="submit" value="generate" className="button" />
       </form>
     </main>
   );
-
-  function handleSubmit(evt) {
-    evt.preventDefault();
-    refresh();
-  }
 
   async function refresh() {
     const canvas = canvasEl.current;
     const {width, height} = canvas;
     const ctx = canvas.getContext('2d');
 
-    const image = await generateImage(type, width, height, throt, t, l);
+    const image = await generateImage(type, width, height, mask, t, l);
     ctx.putImageData(image, 0, 0);
   }
 }
 
-async function generateImage(type, w, h, throt, t, l) {
+async function generateImage(type, w, h, mask, t, l) {
   const grey = await generateNoise('grey', type, w, h, t, l);
 
   const numbers = Uint8ClampedArray.from({length: w * h * 4}, (_, k) => {
@@ -99,9 +90,7 @@ async function generateImage(type, w, h, throt, t, l) {
     const type = k % 4;
 
     if (type < 3) {
-      return throt ?
-        uvTransform(grey[idx], [0, 158], [0, 255]) :
-        grey[idx];
+      return mask ? maskTransform(grey[idx], {w, h, i: idx}) : grey[idx];
     }
     return 255;
   });
@@ -109,16 +98,8 @@ async function generateImage(type, w, h, throt, t, l) {
   return new ImageData(numbers, w, h);
 }
 
-function uvTransform(n, [min, max], [minV, maxV]) {
-  if (n > max) {
-    return maxV;
-  }
-
-  if (n < min) {
-    return minV;
-  }
-
-  return 128;
+function maskTransform(n, {w, h, i}) {
+  return (n * Math.floor(i / w) / h) & 255;
 }
 
 function sliderStyle(t) {
