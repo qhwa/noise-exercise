@@ -1,0 +1,1 @@
+{"version":3,"sources":["noise/white_noise.js"],"names":["whiteNoise","Math","floor","random","seed"],"mappings":"+FAAe,SAASA,IACtB,OAAOC,KAAKC,MAAsB,IAAhBD,KAAKE,UAGlB,SAASC,KAJhB","file":"static/js/4.8b9062e7.chunk.js","sourcesContent":["export default function whiteNoise() {\n  return Math.floor(Math.random() * 255);\n}\n\nexport function seed() {\n}\n"],"sourceRoot":""}
