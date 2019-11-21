@@ -1,16 +1,7 @@
 const GRID = 256; // 纹理划分 256 个格子
 const GRID_MASK = GRID - 1;
-const SPEED = [2, 2];
 
-export default function perlinNoise2D(w, h, t, l, permutation) {
-  return Uint8ClampedArray.from({length: w * h}, (_, k) => {
-    const x = ((k % w + t * SPEED[0]) / l) % GRID;
-    const y = ((Math.floor(k / w) + t * SPEED[1]) / l) % GRID;
-    return perlin(x, y, permutation);
-  });
-}
-
-function perlin(x, y, permutation) {
+export default function perlin(x, y, permutation) {
   const xi0 = x & GRID_MASK;
   const yi0 = y & GRID_MASK;
 

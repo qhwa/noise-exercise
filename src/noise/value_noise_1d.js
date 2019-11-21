@@ -1,15 +1,11 @@
 const GRID = 256; // 纹理划分 256 个格子
 const GRID_MASK = GRID - 1;
 
-export default function valueNoise1D(w, h, t, l, permutation) {
-  return Uint8ClampedArray.from({length: w * h}, (_, k) => {
-    const SPEED = 2;
-    const x = ((k % w + Math.floor(t * SPEED)) / l) % GRID;
-    const x0 = x & GRID_MASK;
-    const x1 = x0 + 1;
+export default function valueNoise1D(x, y, permutation) {
+  const x0 = x & GRID_MASK;
+  const x1 = (x0 + 1) & GRID_MASK;
 
-    return lerp(permutation[x0], permutation[x1], smoothstep(x - x0));
-  });
+  return lerp(permutation[x0], permutation[x1], smoothstep(x - x0));
 }
 
 function smoothstep(t) {

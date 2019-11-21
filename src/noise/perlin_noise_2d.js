@@ -1,6 +1,5 @@
 const GRID = 256; // 纹理划分 256 个格子
 const GRID_MASK = GRID - 1;
-const SPEED = [2, 2];
 
 const template = Array.from({length: GRID}, (_, k) => {
   const x = Math.random() * 2 - 1;
@@ -16,15 +15,7 @@ function normalizedVector([x, y]) {
   ];
 }
 
-export default function perlinNoise2D(w, h, t, l, permutation) {
-  return Uint8ClampedArray.from({length: w * h}, (_, k) => {
-    const x = ((k % w + t * SPEED[0]) / l) % GRID;
-    const y = ((Math.floor(k / w) + t * SPEED[1]) / l) % GRID;
-    return perlin(x, y, permutation);
-  });
-}
-
-function perlin(xNoise, yNoise, permutation) {
+export default function perlin(xNoise, yNoise, permutation) {
   const x0 = xNoise & GRID_MASK;
   const y0 = yNoise & GRID_MASK;
   const x1 = (x0 + 1) & GRID_MASK;
